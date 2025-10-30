@@ -1,12 +1,18 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.22 AS builder
+FROM golang:1.23 AS builder
 WORKDIR /app
+
+ENV GOTOOLCHAIN=auto
 
 COPY go.mod .
 RUN go mod download
 
 COPY . .
+# Install swag and generate OpenAPI docs (compiled into the binary)
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN /go/bin/swag init -g routes/router.go -o ./docs
+
 RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dnsinsight-api ./cmd/dnsinsight-api/main.go
 

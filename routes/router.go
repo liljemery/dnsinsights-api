@@ -2,8 +2,9 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
+	swagger "github.com/gofiber/swagger"
 
-	_ "github.com/jeremyinoa/dnsinsight-api/docs"
+	docs "github.com/jeremyinoa/dnsinsight-api/docs"
 	"github.com/jeremyinoa/dnsinsight-api/internal/middlewares"
 	"github.com/jeremyinoa/dnsinsight-api/internal/modules/common"
 	"github.com/jeremyinoa/dnsinsight-api/internal/adapters/http/dns"
@@ -19,17 +20,15 @@ import (
 func Initialize(cfg *configs.Config) *fiber.App {
 	app := fiber.New(fiber.Config{DisableStartupMessage: true})
 
+	// Ensure Swagger uses correct base path
+	docs.SwaggerInfo.BasePath = "/"
+
 	// Middlewares
 	app.Use(middlewares.Recovery())
 	app.Use(middlewares.Logger())
 
-	// Swagger docs placeholder (avoid hard dependency during initial build)
-	app.Get("/docs/*", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(common.Response{
-			Status:  "success",
-			Message: "Swagger not bundled in this build. Run 'make deps && make docs' and use a swagger UI locally, or integrate fiber-swagger dependency.",
-		})
-	})
+	// Swagger docs
+	app.Get("/docs/*", swagger.HandlerDefault)
 
 	// Health/meta
 	app.Get("/api/meta", func(c *fiber.Ctx) error {

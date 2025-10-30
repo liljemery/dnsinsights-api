@@ -1,0 +1,35 @@
+# Binaries
+/bin/
+/build/
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Swagger generated docs
+/docs/*
+!/docs/README.md
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-data/

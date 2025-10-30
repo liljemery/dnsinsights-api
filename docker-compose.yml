@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    container_name: dnsinsight-postgres
+    environment:
+      POSTGRES_USER: dnsinsight
+      POSTGRES_PASSWORD: dnsinsight
+      POSTGRES_DB: dnsinsight
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: dnsinsight-api
+    depends_on:
+      - postgres
+    environment:
+      APP_PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: dnsinsight
+      DB_PASSWORD: dnsinsight
+      DB_NAME: dnsinsight
+      DB_SSLMODE: disable
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
